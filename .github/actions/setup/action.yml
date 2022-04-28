@@ -1,0 +1,31 @@
+name: Setup environment
+description: Setup Node and install dependencies
+inputs:
+  package:
+    description: Which package to setup (defaults to all)
+    required: false
+    default: 'all'
+runs:
+  using: composite
+  steps:
+    - name: Get the latest pnpm version
+      id: pnpm
+      run: echo "::set-output name=latest-version::$(npm show pnpm version)"
+      shell: bash
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2.1.0
+      with:
+        version: ${{ steps.pnpm.outputs.latest-version }}
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+        cache: pnpm
+    - name: Install dependencies
+      run: |
+        if [[ "${{ inputs.package }}" == "all" ]]; then
+          pnpm install --frozen-lockfile
+        else
+          pnpm install --filter "${{ inputs.package }}" --frozen-lockfile
+        fi
+      shell: bash

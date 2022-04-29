@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true
+  },
+  "files": [
+    "typings/index.ts"
+  ],
+  "exclude": [
+    "scripts/**",
+    "test/**"
+  ]
+}

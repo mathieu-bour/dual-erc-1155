@@ -2,21 +2,43 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract DeepSquare is ERC1155 {
+contract DeepSquare is ERC1155, AccessControl {
+    uint256 public INITIAL_SUPPLY = 210e6 * 1e18;
     uint256 public DPS = 1;
     uint256 public SQUARE = 2;
-    uint256 public INITIAL_SUPPLY = 210e6 * 1e18;
+
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
     constructor() ERC1155("https://dual-erc-1155.mathieu-bour.fr/api/tokens/{id}") {
-        uint256[] memory tokens = new uint256[](2);
-        tokens[0] = DPS;
-        tokens[1] = SQUARE;
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _mint(msg.sender, DPS, INITIAL_SUPPLY, "");
+    }
 
-        uint256[] memory supplies = new uint256[](2);
-        supplies[0] = INITIAL_SUPPLY;
-        supplies[1] = INITIAL_SUPPLY;
+    function mint(
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public onlyRole(MINTER_ROLE) {
+        _mint(to, id, amount, data);
+    }
 
-        _mintBatch(msg.sender, tokens, supplies, "");
+    function burn(
+        address from,
+        uint256 id,
+        uint256 amount
+    ) public onlyRole(BURNER_ROLE) {
+        _burn(from, id, amount);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, AccessControl) returns (bool) {
+        return
+            interfaceId == type(IERC1155).interfaceId ||
+            interfaceId == type(IERC1155MetadataURI).interfaceId ||
+            interfaceId == type(IAccessControl).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }

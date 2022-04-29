@@ -14,10 +14,6 @@ const Home: NextPage = () => {
     provider?.getSigner().signMessage(`Hello ${challenge}`).then(setResult);
   };
 
-  useEffect(() => {
-    connect();
-  }, []);
-
   return (
     <Layout>
       <Typography variant="h3" component="h1">

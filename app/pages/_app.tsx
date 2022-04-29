@@ -4,8 +4,8 @@ import { EmotionCache } from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import Header from '../components/Header';
-import createEmotionCache from '../lib/createEmotionCache';
-import lightTheme from '../lib/lightTheme';
+import createEmotionCache from '../lib/theme/createEmotionCache';
+import lightTheme from '../lib/theme/lightTheme';
 import '../styles/globals.css';
 
 const clientSideEmotionCache = createEmotionCache();

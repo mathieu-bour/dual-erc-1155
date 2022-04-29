@@ -1,3 +1,4 @@
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { useState, MouseEvent } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
@@ -11,11 +12,16 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import useBalances from '../hooks/useBalances';
+import useWeb3 from '../hooks/useWeb3';
+import { ZERO_ADDRESS } from '../lib/web3/constants';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = () => {
+  const { account, connect } = useWeb3();
+  const { balanceDPS } = useBalances();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -93,10 +99,32 @@ const ResponsiveAppBar = () => {
             ))}
           </Box>
 
+          <Box sx={{ flexGrow: 0, mr: 2 }}>
+            <Typography component="div">DPS: {balanceDPS?.toString()}</Typography>
+          </Box>
+
+          <Box sx={{ flexGrow: 0, mr: 2 }}>
+            <Typography component="div">
+              {account ? (
+                account
+              ) : (
+                <Button sx={{ color: 'white' }} onClick={connect}>
+                  Connect
+                </Button>
+              )}
+            </Typography>
+          </Box>
+
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar
+                  alt="Remy Sharp"
+                  src="/static/images/avatar/2.jpg"
+                  component={Jazzicon}
+                  diameter={40}
+                  seed={jsNumberForAddress(account ?? ZERO_ADDRESS)}
+                />
               </IconButton>
             </Tooltip>
             <Menu

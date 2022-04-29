@@ -1,6 +1,5 @@
-import { providers } from 'ethers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import MetaMaskOnboarding from '@metamask/onboarding';
+import { useCallback, useEffect, useState } from 'react';
+import useProvider from './useProvider';
 
 interface BasicEventEmitter {
   on: (event: string, cb: (payload: any) => void) => void;
@@ -14,16 +13,6 @@ function supportsEvents(ethereum: unknown): ethereum is BasicEventEmitter {
     typeof (ethereum as BasicEventEmitter).on === 'function' &&
     typeof (ethereum as BasicEventEmitter).removeListener === 'function'
   );
-}
-
-function useProvider(): providers.JsonRpcProvider | null {
-  return useMemo(() => {
-    if (typeof window !== 'undefined' && MetaMaskOnboarding.isMetaMaskInstalled()) {
-      return new providers.Web3Provider(window.ethereum as any);
-    }
-
-    return null;
-  }, []);
 }
 
 export default function useWeb3() {

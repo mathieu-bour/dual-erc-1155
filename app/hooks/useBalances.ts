@@ -14,8 +14,7 @@ export default function useBalances(account?: string | null) {
     const actualAccount = account ?? currentAccount;
     if (!deepsquare || !actualAccount) return;
 
-    // const [DPS, SQUARE] = await Promise.all([deepsquare.DPS(), deepsquare.SQUARE()]);
-    const [DPS, SQUARE] = [0, 1];
+    const [DPS, SQUARE] = [await deepsquare.DPS(), await deepsquare.SQUARE()];
 
     const balances = await deepsquare.balanceOfBatch([actualAccount, actualAccount], [DPS, SQUARE]);
 
@@ -25,6 +24,14 @@ export default function useBalances(account?: string | null) {
 
   useEffect(() => {
     void _refresh();
+  }, [_refresh]);
+
+  useEffect(() => {
+    window.addEventListener('web3.refresh', _refresh);
+
+    return () => {
+      window.removeEventListener('web3.refresh', _refresh);
+    };
   }, [_refresh]);
 
   return {

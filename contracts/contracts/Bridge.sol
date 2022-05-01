@@ -7,6 +7,9 @@ contract Bridge {
     DeepSquare public token;
     uint256 DPS_MIN_BALANCE = 25000e18;
 
+    event SwapDPStoSQUARE(address indexed account, uint256 amount);
+    event SwapSQUAREtoDPS(address indexed account, uint256 amount);
+
     constructor(DeepSquare _token) {
         token = _token;
     }
@@ -30,13 +33,15 @@ contract Bridge {
         _;
     }
 
-    function swapDPS(uint256 amountDPS) external {
+    function swapDPStoSQUARE(uint256 amountDPS) external {
         token.burn(msg.sender, token.DPS(), amountDPS);
         token.mint(msg.sender, token.SQUARE(), amountDPS, "");
+        emit SwapDPStoSQUARE(msg.sender, amountDPS);
     }
 
-    function swapSQUARE(uint256 amountSQUARE) external onlyEligible {
+    function swapSQUAREtoDPS(uint256 amountSQUARE) external onlyEligible {
         token.burn(msg.sender, token.SQUARE(), amountSQUARE);
         token.mint(msg.sender, token.DPS(), amountSQUARE, "");
+        emit SwapSQUAREtoDPS(msg.sender, amountSQUARE);
     }
 }

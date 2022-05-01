@@ -1,4 +1,6 @@
 import { AppProps } from 'next/app';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { EmotionCache } from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
@@ -24,6 +26,7 @@ const MyApp = (
 
         <Header />
         <Component {...pageProps} />
+        <ToastContainer autoClose={5000} />
       </ThemeProvider>
     </CacheProvider>
   );

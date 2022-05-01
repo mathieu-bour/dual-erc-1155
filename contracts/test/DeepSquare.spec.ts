@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
-import { ethers } from 'hardhat';
 import { describe } from 'mocha';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { DeepSquare, DeepSquare__factory } from '../typings';
+import { DeepSquare } from '../typings';
+import setup from './utils/setup';
 
 describe('DeepSquare', () => {
   let deployer: SignerWithAddress;
@@ -15,19 +15,13 @@ describe('DeepSquare', () => {
   let SQUARE: BigNumber;
 
   beforeEach(async () => {
-    [deployer, ...accounts] = await ethers.getSigners();
-    DeepSquare = await new DeepSquare__factory(deployer).deploy();
-    await DeepSquare.deployed();
-
-    INITIAL_SUPPLY = await DeepSquare.INITIAL_SUPPLY();
-    DPS = await DeepSquare.DPS();
-    SQUARE = await DeepSquare.SQUARE();
+    ({ deployer, accounts, DeepSquare, INITIAL_SUPPLY, DPS, SQUARE } = await setup());
   });
 
   describe('constructor', () => {
     it('should mint 210M DPS and SQUARE tokens to the deployer', async () => {
       expect(await DeepSquare.balanceOf(deployer.address, DPS)).to.equals(INITIAL_SUPPLY);
-      expect(await DeepSquare.balanceOf(deployer.address, SQUARE)).to.equals(INITIAL_SUPPLY);
+      expect(await DeepSquare.balanceOf(deployer.address, SQUARE)).to.equals(0);
     });
   });
 });

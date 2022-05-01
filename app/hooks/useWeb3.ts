@@ -20,18 +20,29 @@ export default function useWeb3() {
   const [account, setAccount] = useState<string | null>(null);
   const provider = useProvider();
 
-  const _dispatch = useCallback(() => window.dispatchEvent(new CustomEvent('web3.refresh')), []);
+  /**
+   * Dispatch a web3.refresh event.
+   */
+  const refresh = useCallback(() => {
+    window.dispatchEvent(new CustomEvent('web3.refresh'));
+  }, []);
 
+  /**
+   * Refresh the account, network and chain details.
+   */
   const _refresh = useCallback(async () => {
     if (!provider) return;
 
     const [network, accounts] = await Promise.all([provider.detectNetwork(), provider.listAccounts()]);
 
-    setChainId(Number(network.chainId.toString()).toString(16));
+    setChainId(`0x${Number(network.chainId.toString()).toString(16)}`);
     setAccount(accounts?.[0] ?? null);
   }, [provider]);
 
-  const connect = async () => {
+  /**
+   * Connect the web3 provider (MetaMask, Coinbase Wallet, etc).
+   */
+  const connect = useCallback(async () => {
     if (!provider) return;
 
     try {
@@ -39,9 +50,9 @@ export default function useWeb3() {
     } catch (e) {
       console.error(e);
     } finally {
-      _dispatch();
+      refresh();
     }
-  };
+  }, [refresh, provider]);
 
   useEffect(() => {
     window.addEventListener('web3.refresh', _refresh);
@@ -59,11 +70,19 @@ export default function useWeb3() {
     };
   }, [_refresh]);
 
+  /**
+   * Auto-connect the web3 provider.
+   */
+  useEffect(() => {
+    connect();
+  }, [connect]);
+
   return {
     provider,
     account,
     chainId,
 
+    refresh,
     connect,
   };
 }

@@ -1,5 +1,7 @@
+import { commify, formatUnits } from 'ethers/lib/utils';
+import Link from 'next/link';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useState, MouseEvent } from 'react';
+import { MouseEvent, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
@@ -16,11 +18,15 @@ import useBalances from '../hooks/useBalances';
 import useWeb3 from '../hooks/useWeb3';
 import { ZERO_ADDRESS } from '../lib/web3/constants';
 
-const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
+const pages = [
+  { label: 'Home', url: '/' },
+  { label: 'Faucet', url: '/faucet' },
+];
+
 const ResponsiveAppBar = () => {
-  const { account, connect } = useWeb3();
+  const { chainId, account, connect } = useWeb3();
   const { balanceDPS } = useBalances();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -79,8 +85,10 @@ const ResponsiveAppBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.url} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    <a href={page.url}>{page.label}</a>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -93,14 +101,20 @@ const ResponsiveAppBar = () => {
           {/* Medium+ menu */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
-                {page}
-              </Button>
+              <Link href={page.url} key={page.url} passHref>
+                <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }} component="a">
+                  {page.label}
+                </Button>
+              </Link>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0, mr: 2 }}>
-            <Typography component="div">DPS: {balanceDPS?.toString()}</Typography>
+            <Typography component="div">Chain: {chainId}</Typography>
+          </Box>
+
+          <Box sx={{ flexGrow: 0, mr: 2 }}>
+            <Typography component="div">DPS: {balanceDPS && commify(formatUnits(balanceDPS))}</Typography>
           </Box>
 
           <Box sx={{ flexGrow: 0, mr: 2 }}>

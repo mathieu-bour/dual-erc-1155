@@ -12,7 +12,7 @@ contract DeepSquare is ERC1155, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
-    constructor() ERC1155("https://dual-erc-1155.mathieu-bour.fr/api/tokens/{id}") {
+    constructor() ERC1155("https://dual.mathieu-bour.fr/api/tokens/{id}") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _mint(msg.sender, DPS, INITIAL_SUPPLY, "");
     }

@@ -1,11 +1,8 @@
-import { useMemo } from 'react';
 import { DeepSquare__factory } from '@mathieu-bour/dual-contracts';
-import useProvider from './useProvider';
+import { DeepSquare } from '@mathieu-bour/dual-contracts';
+import { DEEPSQUARE_ADDRESS } from '../lib/web3/constants';
+import useContract from './useContract';
 
 export default function useDeepSquare() {
-  const provider = useProvider();
-
-  return useMemo(() => {
-    return provider && DeepSquare__factory.connect('0x5FbDB2315678afecb367f032d93F642f64180aa3', provider);
-  }, [provider]);
+  return useContract<DeepSquare>(DeepSquare__factory, DEEPSQUARE_ADDRESS);
 }
